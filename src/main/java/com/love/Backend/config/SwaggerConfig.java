@@ -21,7 +21,7 @@ public class SwaggerConfig {
                         .title("Journal App APIs")
                         .description("Backend APIs for Journal App — now includes profile photo endpoints and user profile enhancements")
                         .version("1.1")
-                        .contact(new Contact().name("Love Dixit").email("cyber.lavdixit@gmail.com"))
+                        .contact(new Contact().name("Lav Kumar Dixit").email("cyber.lavdixit@gmail.com"))
                         .license(new License().name("MIT")))
                 .addServersItem(new Server().url("/"))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
