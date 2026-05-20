@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  app:
+    image: ${REGISTRY}/${ECR_REPOSITORY}:latest
+    container_name: journal-api
+    restart: always
+    ports:
+      - "8081:8081"
+      - "80:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - SERVER_PORT=8081
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - KAFKA_CONSUMER_GROUP=journal-prod-group
+      - AWS_REGION=${AWS_REGION}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      - AWS_S3_ENABLED=true
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+      - MURF_API_KEY=${MURF_API_KEY}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+    networks:
+      - journal-network
+    depends_on:
+      - redis
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: journal-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - journal-network
+    volumes:
+      - redis_data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+networks:
+  journal-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+
