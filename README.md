@@ -4,7 +4,7 @@ A production-ready, enterprise-grade backend for a personal journaling applicati
 
 **Live API:** [https://journalapilav.tech](https://journalapilav.tech)  
 **Swagger UI:** [https://journalapilav/swagger-ui.html](https://journalapilav.tech/swagger-ui.html)  
-**Author:** [Love Dixit](https://www.linkedin.com/in/lavkumardixit/) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
+**Author:** [Lav Kumar Dixit](https://www.linkedin.com/in/lavkumardixit/) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
 
 ---
 
