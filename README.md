@@ -2,9 +2,9 @@
 
 A production-ready, enterprise-grade backend for a personal journaling application with JWT authentication, MongoDB, Redis caching, and AWS cloud deployment.
 
-**Live API:** [https://your-api-url.com](https://journalapilav.tech)  
-**Swagger UI:** [https://your-api-url.com/swagger-ui.html](https://your-api-url.com/swagger-ui.html)  
-**Author:** [Love Dixit](https://www.linkedin.com/in/lovekumardixit) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
+**Live API:** [https://journalapilav.tech](https://journalapilav.tech)  
+**Swagger UI:** [https://journalapilav/swagger-ui.html](https://journalapilav.tech/swagger-ui.html)  
+**Author:** [Love Dixit](https://www.linkedin.com/in/lavkumardixit/) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
 
 ---
 
@@ -157,7 +157,7 @@ docker-compose up -d
 - `GET /sentiment` — Filter entries by sentiment
 - `GET /sentiment/stats` — Get sentiment statistics
 
-**For complete API details, visit:** [Swagger UI](https://your-api-url.com/swagger-ui.html)
+**For complete API details, visit:** [Swagger UI](https://journalapilav/swagger-ui.html)
 
 ---
 
@@ -302,7 +302,7 @@ This project is licensed under the **MIT License** — see [LICENSE](LICENSE) fi
 
 **Love Dixit**
 - GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
-- LinkedIn: [Love Dixit](https://www.linkedin.com/in/lovekumardixit)
+- LinkedIn: [Love Dixit](https://www.linkedin.com/in/lavkumardixit/)
 - Email: cyber.lavdixit@gmail.com
 
 ---
