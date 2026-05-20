@@ -1,179 +1,310 @@
 # Journal Backend API
 
-This is a professional, production-ready backend for a personal journaling application implemented with Spring Boot (3.x), Java 17, MongoDB and JWT-based authentication. It provides user & admin roles, CRUD for journal entries, sentiment tracking, a weather integration for personalized greetings, email/kafka hooks, and a documented OpenAPI/Swagger surface for easy exploration.
+A production-ready, enterprise-grade backend for a personal journaling application with JWT authentication, MongoDB, Redis caching, and AWS cloud deployment.
 
-Key goals:
-- Secure authentication and token management (access + refresh tokens)
-- Clear separation of concerns (controller/service/repository)
-- Container-friendly: ready to run in Docker
-- Auto-generated API documentation (OpenAPI / Swagger)
-
-Table of contents
-- Features
-- Quickstart (run locally / Docker)
-- Configuration & environment variables
-- API reference & Swagger
-- Project structure & architecture
-- Testing
-- Development notes: keeping Swagger docs up-to-date
-- Contributing & license
+**Live API:** [https://your-api-url.com](https://your-api-url.com)  
+**Swagger UI:** [https://your-api-url.com/swagger-ui.html](https://your-api-url.com/swagger-ui.html)  
+**Author:** [Love Dixit](https://www.linkedin.com/in/lovekumardixit) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
 
 ---
 
-Features
-- JWT-based authentication with refresh tokens and role-based access (USER / ADMIN)
-- **User registration with strict validation rules**: username (lowercase, no spaces, 3-50 chars), password (min 8 chars with uppercase/lowercase/number/special char), unique email. See `VALIDATION_RULES.md` for details.
-- User registration, login, logout and profile management
-- Profile photo support: users can upload/update/delete profile photos. The user profile includes `profilePhotoUrl` (served from `/uploads/profile-photos/`).
-- CRUD endpoints for journal entries (create/read/update/delete, partial updates supported)
-- Sentiment tracking (HAPPY, SAD, ANGRY, NEUTRAL) and filters
-- Weather API integration for greetings
-- Email (SMTP) and Kafka integration points (configured in dev profile)
-- OpenAPI (springdoc) auto-generated documentation with Bearer Authentication support
-- Docker image + environment-variable driven configuration
+## 🚀 Key Features
 
-Quickstart — run locally
-Prerequisites: Java 17, Maven 3.x, and (optionally) Docker.
+- **JWT-based Authentication** with refresh tokens and role-based access (USER / ADMIN)
+- **Secure User Registration** with strict validation (username, password, email)
+- **User Profile Management** with profile photo upload/update/delete (AWS S3 storage)
+- **Complete Journal CRUD Operations** with partial update support
+- **Sentiment Tracking** (HAPPY, SAD, ANGRY, NEUTRAL) with filtering
+- **Weather API Integration** for personalized greetings
+- **Email (SMTP) & Kafka Integration** for event-driven architecture
+- **OpenAPI/Swagger** auto-generated documentation with Bearer Authentication
+- **Redis Caching** for improved performance
+- **HTTPS/SSL Secured** with Let's Encrypt
+- **Production-Ready Deployment** on AWS EC2 with Docker & Nginx
 
-1) Clone
-```powershell
-git clone <your-repo-url>
-cd Backend
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+- **Java 17** with Spring Boot 3.x
+- **Spring Security** with JWT Authentication
+- **Spring Data MongoDB** for persistence
+- **Spring Data Redis** for caching
+- **Spring Kafka** for event streaming
+- **OAuth2** (Google Login support)
+- **REST APIs** with comprehensive documentation
+
+### Database & Caching
+- **MongoDB Atlas** for scalable NoSQL database
+- **Redis Cache** for session & query caching
+
+### Messaging & Event Streaming
+- **Apache Kafka** with Zookeeper
+- **Event-Driven Architecture** for asynchronous processing
+
+### Cloud & Deployment
+- **AWS EC2** (Ubuntu Server) for hosting
+- **AWS S3** for profile image storage
+- **Docker & Docker Compose** for containerization
+- **Nginx Reverse Proxy** for load balancing
+- **HTTPS/SSL** with Let's Encrypt certificate
+- **GitHub Actions** for CI/CD automation
+
+### Security
+- JWT-based authentication with secure token management
+- Role-based access control (RBAC)
+- OAuth2 authentication (Google Login)
+- Environment-based configuration (dev, staging, prod)
+- Secure HTTPS/TLS encryption
+- Protected AWS credentials and sensitive data
+
+---
+
+## 📋 Quick Start
+
+### Prerequisites
+- Java 17+
+- Maven 3.x
+- Docker & Docker Compose (optional)
+- Linux/Unix environment for production
+
+### Run Locally
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/lovekumardixit/Journal-Backend-API.git
+cd Journal-Backend-API
 ```
 
-2) Configure environment
-The project uses profile-based yml files. By default the `dev` profile is active and server runs on port 8081.
-
-Important environment variables (defaults are defined in `src/main/resources/application-dev.yml`):
-- MONGO_URI — MongoDB connection string (default points to a demo Atlas URI)
-- JWT_SECRET — secret used to sign JWT tokens (default: a dev key in `application-dev.yml`)
-- SERVER_PORT — server port (default 8081)
-- WEATHER_API_KEY — external weather provider key
-- MAIL_USERNAME / MAIL_PASSWORD — SMTP credentials for sending email
-- KAFKA_BOOTSTRAP_SERVERS — Kafka bootstrap address
-
-You can export variables or run with JVM properties, for example (PowerShell):
-```powershell
-$env:MONGO_URI='mongodb://localhost:27017/userdb';
-$env:JWT_SECRET='a_strong_secret_here';
-mvn -Dspring-boot.run.profiles=dev spring-boot:run
+2. **Configure environment variables**
+```bash
+export MONGO_URI='mongodb+srv://<user>:<pass>@cluster.mongodb.net/userdb'
+export JWT_SECRET='your-strong-secret-key-here'
+export SERVER_PORT=8081
+export WEATHER_API_KEY='your-api-key'
+export MAIL_USERNAME='your-email@gmail.com'
+export MAIL_PASSWORD='your-app-password'
+export KAFKA_BOOTSTRAP_SERVERS='localhost:9092'
+export AWS_ACCESS_KEY_ID='your-aws-key'
+export AWS_SECRET_ACCESS_KEY='your-aws-secret'
+export AWS_S3_BUCKET='your-bucket-name'
 ```
 
-3) Build and run
-```powershell
+3. **Build & Run**
+```bash
+# With Maven (dev profile)
 mvn clean package
-# run with java -jar
+mvn -Dspring-boot.run.profiles=dev spring-boot:run
+
+# With Java
 java -jar target/Backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
 ```
 
-Default server URL: http://localhost:8081
+**Local server:** http://localhost:8081
 
-Run with Maven (dev profile):
-```powershell
-mvn -Dspring-boot.run.profiles=dev spring-boot:run
-```
+### Docker Deployment
 
-Docker
-```powershell
-# build
+```bash
+# Build Docker image
 docker build -t journal-backend-api:latest .
-# run (provide required env vars)
-docker run -p 8081:8081 -e MONGO_URI='<your-mongo>' -e JWT_SECRET='<secret>' journal-backend-api:latest
+
+# Run container
+docker run -p 8081:8081 \
+  -e MONGO_URI='<your-mongodb-uri>' \
+  -e JWT_SECRET='<your-secret>' \
+  -e AWS_ACCESS_KEY_ID='<your-key>' \
+  -e AWS_SECRET_ACCESS_KEY='<your-secret>' \
+  journal-backend-api:latest
+
+# With Docker Compose
+docker-compose up -d
 ```
-
-API reference & Swagger
-- OpenAPI JSON: GET /v3/api-docs
-- Swagger UI: http://localhost:8081/swagger-ui.html (redirects to /swagger-ui/index.html)
-
-Note: This project uses `springdoc-openapi` (see `pom.xml`) and the `SwaggerConfig` bean to configure API title, description and a Bearer JWT security scheme. The OpenAPI document is generated at runtime from controller APIs and model classes.
-
-Authentication in Swagger UI
-1. Click "Authorize" in the Swagger UI
-2. Provide your token in the format: `Bearer YOUR_JWT_TOKEN`
-
-Project structure (high level)
-```
-src/main/java/com/love/Backend/
-├── controller/    # REST controllers (AuthController, UserController, BackendController (entry), sentimentController ...)
-├── service/       # business logic (JwtService, UserEntryService, WeatherService, etc.)
-├── repository/    # Spring Data repositories (UserRepository, EntryRepository ...)
-├── entity/        # domain models and persistence objects
-├── dto/           # request/response DTOs
-├── config/        # Spring configuration (Security, Swagger/OpenAPI, Redis, etc.)
-├── kafka/         # kafka producers/consumers & events
-├── exception/     # custom exceptions and handlers
-└── BackendApplication.java
-```
-
-Endpoints (base path is root — check controllers for exact paths)
-- POST  /auth/register        — register a new user
-- POST  /auth/login           — authenticate & receive access + refresh token
-- POST  /auth/refresh         — refresh access token
-- POST  /auth/logout          — logout
-- GET   /user/me              — get current user profile
-- GET   /user/get/{city}      — weather greeting for city
-- POST  /user/profile-photo/upload — upload or update authenticated user's profile photo (multipart/form-data: file param name `file`)
-- GET   /user/profile        — get authenticated user's profile including `profilePhotoUrl`
-- DELETE /user/profile-photo — delete authenticated user's profile photo
-- CRUD  /entry/**             — journal entry endpoints (see controllers for full paths)
-- GET   /sentiment            — filter entries by sentiment
-
-For the canonical and complete API surface, use the Swagger UI — it always reflects the compiled controllers and DTOs.
-
-Profile photo notes (quick)
-- Upload: POST `/user/profile-photo/upload` — multipart file param named `file`. On success the response contains `photoUrl` (path under `/uploads/profile-photos/`).
-- Get profile: GET `/user/profile` — returns `UserResponseDTO` including `profilePhotoUrl`.
-- Delete: DELETE `/user/profile-photo` — removes stored photo and clears `profilePhotoUrl` on the user.
-
-Swagger / OpenAPI
-- The OpenAPI doc is generated from controller annotations. The `SwaggerConfig` OpenAPI bean has been updated to v1.1 and includes contact/license metadata. Use the Swagger UI to exercise file upload endpoints (authorize with Bearer token first).
-
-Testing
-Run unit and integration tests with Maven:
-```powershell
-mvn test
-```
-
-**User Validation Testing**
-See `VALIDATION_RULES.md` for comprehensive validation rules and `TEST_VALIDATION.md` for step-by-step test cases covering:
-- Username validation (lowercase, no spaces, 3-50 chars)
-- Password complexity (uppercase + lowercase + number + special char)
-- Email validation (valid format, unique)
-- Duplicate username/email checks
-- Login with various scenarios
-
-Development notes — keeping Swagger docs up-to-date
-- Controllers and DTOs drive the OpenAPI output. To keep Swagger documentation accurate:
-  - Annotate controllers and methods with descriptive JavaDoc or `@Operation` / `@Parameter` (from `io.swagger.v3.oas.annotations`) where needed.
-  - Keep request/response DTO classes well-typed and documented so the model schemas in OpenAPI are generated correctly.
-  - Update the `SwaggerConfig` `OpenAPI` bean (src/main/java/com/love/Backend/config/SwaggerConfig.java) if you need to change title/description/version or to add contact/license metadata.
-  - Because a security scheme (Bearer) is already registered in `SwaggerConfig`, Swagger UI will display the lock/Authorize button — provide a valid JWT to exercise secured endpoints from the UI.
-
-If you want automated OpenAPI generation to a file as part of CI, add a step that requests `/v3/api-docs` and saves the output (or use a plugin to generate static docs).
-
-Security & production readiness
-- Ensure `JWT_SECRET` is strong and not committed into VCS.
-- Use a managed MongoDB instance (Atlas) or a secure production cluster, enable authentication and network rules.
-- Configure TLS/HTTPS (reverse proxy / load balancer) for public deployments.
-- Rotate secrets and configure logging/monitoring.
-
-Contributing
-- Fork, create a feature branch, open a PR. See project tags and tests for expected style and coverage.
-
-License
-- MIT (see LICENSE file)
-
-Author & contact
-- Love Dixit — lovekumardixit on GitHub
-- Email: cyber.lavdixit@gmail.com
-
-Last updated: May 17, 2026
 
 ---
 
-## 📋 Related Documentation
-- **VALIDATION_RULES.md** — Comprehensive user validation rules (username, password, email, best practices)
-- **TEST_VALIDATION.md** — Step-by-step test cases for all validation scenarios
-- **KAFKA_GUIDE.md** — Kafka setup and event streaming
-- **EC2_S3_DEPLOYMENT.md** — AWS production deployment
-- **QUICK_START.md** — 5-minute local setup
+## 🌐 API Documentation
+
+### Access Points
+- **Base URL:** https://your-api-url.com
+- **OpenAPI JSON:** https://your-api-url.com/v3/api-docs
+- **Swagger UI:** https://your-api-url.com/swagger-ui.html
+
+### Core Endpoints
+
+**Authentication**
+- `POST /auth/register` — Register new user
+- `POST /auth/login` — Login and receive JWT tokens
+- `POST /auth/refresh` — Refresh access token
+- `POST /auth/logout` — Logout user
+
+**User Profile**
+- `GET /user/me` — Get current user profile
+- `GET /user/profile` — Get profile with photo URL
+- `GET /user/get/{city}` — Get weather greeting
+- `POST /user/profile-photo/upload` — Upload profile photo (multipart)
+- `DELETE /user/profile-photo` — Delete profile photo
+
+**Journal Entries**
+- `POST /entry` — Create new entry
+- `GET /entry/{id}` — Get entry by ID
+- `PUT /entry/{id}` — Update entry
+- `PATCH /entry/{id}` — Partial update
+- `DELETE /entry/{id}` — Delete entry
+- `GET /entry/user/{userId}` — Get user's entries
+
+**Filters & Analytics**
+- `GET /sentiment` — Filter entries by sentiment
+- `GET /sentiment/stats` — Get sentiment statistics
+
+**For complete API details, visit:** [Swagger UI](https://your-api-url.com/swagger-ui.html)
+
+---
+
+## 🔒 Authentication in Swagger UI
+
+1. Click the **"Authorize"** button in Swagger UI
+2. Enter your token in the format: `Bearer YOUR_JWT_TOKEN`
+3. Execute requests directly from the UI
+
+---
+
+## 📁 Project Structure
+
+```
+src/main/java/com/love/Backend/
+├── controller/       # REST endpoints (Auth, User, Entry, Sentiment)
+├── service/          # Business logic & core services
+├── repository/       # Spring Data repositories
+├── entity/           # JPA domain models
+├── dto/              # Request/Response DTOs
+├── config/           # Spring config (Security, Swagger, Redis, AWS S3)
+├── kafka/            # Event producers & consumers
+├── exception/        # Custom exceptions & error handlers
+├── util/             # Utility classes & helpers
+└── BackendApplication.java
+```
+
+---
+
+## 🧪 Testing
+
+Run all tests with Maven:
+```bash
+mvn test
+```
+
+**Validation Tests:** Comprehensive test cases for user registration, authentication, and input validation.
+
+See related documentation:
+- **VALIDATION_RULES.md** — User validation rules & best practices
+- **TEST_VALIDATION.md** — Step-by-step test scenarios
+
+---
+
+## 🚀 Production Deployment (AWS EC2)
+
+### Infrastructure Setup
+- **OS:** Ubuntu 20.04+ LTS
+- **Java 17** installed
+- **MongoDB Atlas** for managed database
+- **Redis** for caching layer
+- **Nginx** reverse proxy with SSL
+- **Let's Encrypt** for HTTPS/TLS
+
+### Deployment Steps
+
+1. **Push Docker image to registry**
+```bash
+docker tag journal-backend-api:latest your-registry/journal-backend-api:latest
+docker push your-registry/journal-backend-api:latest
+```
+
+2. **Deploy on EC2**
+```bash
+ssh ec2-user@your-ec2-ip
+cd /opt/journal-api
+docker pull your-registry/journal-backend-api:latest
+docker-compose up -d
+```
+
+3. **Configure Nginx**
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name your-api-url.com;
+    
+    ssl_certificate /etc/letsencrypt/live/your-api-url.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-api-url.com/privkey.pem;
+    
+    location / {
+        proxy_pass http://localhost:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### Environment Configuration
+Production uses profile-based configuration. Set environment variables:
+```bash
+export SPRING_PROFILES_ACTIVE=prod
+export MONGO_URI='mongodb+srv://user:pass@cluster.mongodb.net/journal'
+export JWT_SECRET='<strong-production-secret>'
+export AWS_S3_BUCKET='journal-profile-photos'
+```
+
+---
+
+## 🔐 Security Best Practices
+
+✅ **JWT Secret:** Strong, random, environment-specific  
+✅ **HTTPS/TLS:** Let's Encrypt SSL certificates  
+✅ **Database:** MongoDB Atlas with authentication & IP whitelist  
+✅ **AWS Credentials:** Stored in EC2 IAM roles (not hardcoded)  
+✅ **Environment Variables:** Profile-based, never committed to VCS  
+✅ **CORS:** Configured for trusted domains only  
+✅ **Rate Limiting:** Implemented on authentication endpoints  
+
+---
+
+## 📚 Documentation
+
+- **VALIDATION_RULES.md** — Comprehensive validation standards
+- **TEST_VALIDATION.md** — Test case scenarios
+- **KAFKA_GUIDE.md** — Event streaming setup
+- **EC2_S3_DEPLOYMENT.md** — AWS deployment guide
+- **QUICK_START.md** — 5-minute quick setup
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE) file for details.
+
+---
+
+## 👨‍💻 Author
+
+**Love Dixit**
+- GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
+- LinkedIn: [Love Dixit](https://www.linkedin.com/in/lovekumardixit)
+- Email: cyber.lavdixit@gmail.com
+
+---
+
+**Last Updated:** May 20, 2026 | Status: Production Ready ✅
