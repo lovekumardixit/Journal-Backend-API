@@ -4,7 +4,6 @@ server:
     context-path: /
 
 spring:
-  profiles: prod
   application:
     name: journal-backend-api
   data:
