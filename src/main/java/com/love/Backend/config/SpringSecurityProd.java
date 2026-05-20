@@ -23,7 +23,7 @@ public class SpringSecurityProd {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private JwtFilter jwtFilter;
+    private JwtRequestFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
