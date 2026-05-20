@@ -2,7 +2,7 @@
 
 A production-ready, enterprise-grade backend for a personal journaling application with JWT authentication, MongoDB, Redis caching, and AWS cloud deployment.
 
-**Live API:** [https://your-api-url.com](https://your-api-url.com)  
+**Live API:** [https://your-api-url.com](https://journalapilav.tech)  
 **Swagger UI:** [https://your-api-url.com/swagger-ui.html](https://your-api-url.com/swagger-ui.html)  
 **Author:** [Love Dixit](https://www.linkedin.com/in/lovekumardixit) | GitHub: [@lovekumardixit](https://github.com/lovekumardixit)
 
